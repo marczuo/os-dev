@@ -1,38 +1,29 @@
 ; A boot sector that prints a message using the scrolling teletype interrupt
 
-	mov	ah,	0x0e		; Indicates interrupt type
-	mov	al,	'H'
-	int	0x10 
-	mov	al,	'e'
-	int	0x10
-	mov	al,	'l'
-	int	0x10
-	mov	al,	'l'
-	int	0x10
-	mov	al,	'o'
-	int	0x10
-	mov	al,	','
-	int	0x10
-	mov	al,	' '
-	int	0x10
-	mov	al,	'w'
-	int	0x10
-	mov	al,	'o'
-	int	0x10
-	mov	al,	'r'
-	int	0x10
-	mov	al,	'l'
-	int	0x10
-	mov	al,	'd'
-	int	0x10
-	mov	al,	'!'
-	int	0x10
-	mov	al,	0xd		; CR
-	int	0x10
-	mov	al,	0xa		; LF
-	int	0x10
+	[org	0x7c00]			; BIOS loads boot sector to 0x7c00
+
+	mov	bx,	HELLO_MSG
+	call	print_string
+	mov	bx,	0xbeef
+	call	print_hex
+	mov	bx,	NEWLINE
+	call	print_string
 
 	jmp	$			; Start an infinite loop ($ = inst_pc)
+
+; Function portion
+
+%include "print_hex.asm" 
+
+; Data portion
+
+HELLO_MSG:
+	
+	db	"Hello, world!", 0xd, 0xa, "Here is a hex number, for fun: ", 0
+
+NEWLINE:
+
+	db	0xd, 0xa, 0
 
 ; Padding and magic number to indicate boot sector
 
